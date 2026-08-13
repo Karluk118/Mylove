@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="tk">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Şakira üçin</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600&display=swap');
+    :root { --wine:#6c1830; --rose:#b94767; --cream:#fff9f5; --ink:#3b1b25; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; color:var(--ink); background:#f5dce0; font-family:Manrope,Arial,sans-serif; }
+    .screen { min-height:100vh; display:grid; place-items:center; padding:22px; background:radial-gradient(circle at 16% 11%,#fff7f5 0 6%,transparent 26%),radial-gradient(circle at 85% 93%,#c75879 0,transparent 33%),linear-gradient(135deg,#7a1732,#e9a4ae); }
+    .lock { width:min(100%,430px); padding:42px 30px; text-align:center; border:1px solid #fff9; border-radius:28px; color:white; background:#ffffff18; backdrop-filter:blur(15px); box-shadow:0 20px 55px #43071855; }
+    .heart { font-size:44px; line-height:1; animation:pulse 1.8s infinite; }
+    h1,h2 { font-family:'Cormorant Garamond',Georgia,serif; }
+    h1 { margin:14px 0 7px; font-size:42px; font-weight:600; }
+    .lock p { margin:0 0 25px; opacity:.92; line-height:1.6; }
+    input { width:100%; padding:15px 16px; border:1px solid #fff9; border-radius:13px; outline:none; color:#5c1830; font:500 16px Manrope,sans-serif; text-align:center; }
+    button { margin-top:12px; width:100%; padding:14px; border:0; border-radius:13px; background:#fff; color:#7a1732; font:600 15px Manrope,sans-serif; cursor:pointer; }
+    .error { min-height:20px; margin:12px 0 0; font-size:13px; color:#ffe1e8; }
+    #card { display:none; min-height:100vh; overflow:hidden; background:var(--cream); }
+    .hero { min-height:70vh; padding:65px 22px 45px; display:grid; place-items:center; text-align:center; position:relative; isolation:isolate; overflow:hidden; color:white; background:linear-gradient(0deg,#350916b0,#35091618),url('photos/together-kiss.jpg') center/cover; animation:heroZoom 12s ease-in-out infinite alternate; }
+    .hero::after { content:'♥'; position:absolute; z-index:-1; right:7%; top:8%; color:#ffc5d1; opacity:.75; font-size:58px; }
+    .eyebrow { letter-spacing:.22em; text-transform:uppercase; font-size:11px; font-weight:600; }
+    .hero h1 { margin:11px 0 14px; font-size:clamp(48px,12vw,80px); line-height:.9; }
+    .hero p { max-width:360px; margin:0; line-height:1.7; font-size:15px; }
+    .scroll { position:absolute; bottom:20px; font-size:11px; letter-spacing:.13em; text-transform:uppercase; opacity:.82; }
+    .hero > div:first-child { animation:rise .9s .15s both; }
+    .floating-hearts { position:absolute; inset:0; pointer-events:none; z-index:-1; overflow:hidden; }
+    .floating-hearts span { position:absolute; bottom:-45px; color:#ffd4dd; text-shadow:0 2px 12px #53101f88; opacity:.78; animation:floatUp linear infinite; }
+    .floating-hearts span:nth-child(1) { left:8%; font-size:20px; animation-duration:8s; animation-delay:-5s; }
+    .floating-hearts span:nth-child(2) { left:25%; font-size:30px; animation-duration:11s; animation-delay:-8s; }
+    .floating-hearts span:nth-child(3) { left:52%; font-size:18px; animation-duration:9s; animation-delay:-3s; }
+    .floating-hearts span:nth-child(4) { left:74%; font-size:27px; animation-duration:12s; animation-delay:-9s; }
+    .floating-hearts span:nth-child(5) { left:91%; font-size:16px; animation-duration:8.5s; animation-delay:-6s; }
+    .letter { max-width:720px; padding:72px 29px 42px; margin:auto; text-align:center; }
+    .letter h2 { margin:0 0 23px; color:var(--wine); font-size:45px; font-weight:600; }
+    .letter p { margin:0 auto; max-width:580px; font-family:'Cormorant Garamond',Georgia,serif; font-size:25px; line-height:1.35; }
+    .signature { margin-top:27px!important; color:var(--rose); font-size:27px!important; }
+    .gallery { max-width:1050px; margin:auto; padding:20px 18px 80px; display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+    .gallery img { display:block; width:100%; height:255px; object-fit:cover; border-radius:4px; cursor:zoom-in; box-shadow:0 8px 22px #5e1a2922; opacity:0; transform:translateY(24px) scale(.98); transition:opacity .7s ease,transform .8s cubic-bezier(.2,.75,.25,1),box-shadow .3s ease; }
+    .gallery img.show { opacity:1; transform:translateY(0) scale(1); }
+    .gallery img:hover { transform:translateY(-5px) scale(1.015); box-shadow:0 17px 32px #5e1a2940; }
+    .gallery img:first-child,.gallery img:last-child { grid-column:span 2; height:350px; }
+    footer { padding:35px 20px 45px; text-align:center; color:#fff; background:var(--wine); font-family:'Cormorant Garamond',Georgia,serif; font-size:26px; }
+    .lightbox { display:none; position:fixed; z-index:10; inset:0; align-items:center; justify-content:center; padding:20px; background:#16040be8; opacity:0; transition:opacity .25s ease; }
+    .lightbox.open { display:flex; opacity:1; }
+    .lightbox img { max-width:100%; max-height:88vh; border-radius:5px; object-fit:contain; box-shadow:0 15px 55px #000a; animation:lightboxIn .3s ease; }
+    .lightbox button { position:absolute; z-index:1; width:45px; height:45px; margin:0; padding:0; border:1px solid #fff7; border-radius:50%; color:#fff; background:#ffffff24; font-size:29px; line-height:1; cursor:pointer; }
+    .lightbox .close { top:19px; right:19px; }
+    .lightbox .previous { left:12px; }
+    .lightbox .next { right:12px; }
+    @keyframes pulse { 50% { transform:scale(1.12); } }
+    @keyframes rise { from { opacity:0; transform:translateY(22px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes floatUp { 0% { transform:translateY(0) rotate(0deg); opacity:0; } 12%,85% { opacity:.78; } 100% { transform:translateY(-85vh) rotate(22deg); opacity:0; } }
+    @keyframes heroZoom { from { background-size:100%; } to { background-size:112%; } }
+    @keyframes lightboxIn { from { opacity:0; transform:scale(.94); } to { opacity:1; transform:scale(1); } }
+    @media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; animation-iteration-count:1!important; scroll-behavior:auto!important; transition-duration:.01ms!important; } .gallery img { opacity:1; transform:none; } }
+    @media (max-width:460px) { .gallery img { height:190px; } .gallery img:first-child,.gallery img:last-child { height:260px; } .letter { padding-top:58px; } }
+  </style>
+</head>
+<body>
+  <main id="lockScreen" class="screen">
+    <section class="lock">
+      <div class="heart">♥</div>
+      <h1>Şakira üçin</h1>
+      <p>Bu kiçijik syr diňe seniň üçin.<br>Paroly giriz we aç.</p>
+      <input id="password" type="password" autocomplete="off" placeholder="Parol" aria-label="Parol">
+      <button id="openButton">Açmak</button>
+      <div id="error" class="error"></div>
+    </section>
+  </main>
+
+  <main id="card">
+    <section class="hero">
+      <div class="floating-hearts" aria-hidden="true"><span>♥</span><span>♥</span><span>♥</span><span>♥</span><span>♥</span></div>
+      <div>
+        <div class="eyebrow">Seni söýýärin</div>
+        <h1>Şakira</h1>
+        <p>Soňky söýgi bilen döredilen, diňe saňa degişli kiçijik açyk hat.</p>
+      </div>
+      <div class="scroll">aşak süýşür ↓</div>
+    </section>
+    <section class="letter">
+      <h2>Ezizim,</h2>
+      <p>Men seni juda gowy görýärin. Seni durmuşuma getiren Allaha hamd-u senalar bolsun. Iň kyn günümde-de, iň bagtly günümde-de seniň ýanymda bolmagyňy isleýärin.</p>
+      <p class="signature">Seni söýýärin.<br>Humoýun</p>
+    </section>
+    <section class="gallery" aria-label="Biziň ýatlamalarymyz">
+      <img src="photos/together-park.jpg" alt="Şakira bilen Humoýun seýilgähde">
+      <img src="photos/shakira-hearts.jpg" alt="Şakira">
+      <img src="photos/shakira-cafe.jpg" alt="Şakira kafede">
+      <img src="photos/shakira-city.jpg" alt="Şakira şäherde">
+      <img src="photos/together-selfie.jpg" alt="Şakira bilen Humoýun">
+      <img src="photos/shakira-scarf.jpg" alt="Şakira">
+      <img src="photos/together-kiss.jpg" alt="Şakira bilen Humoýun">
+      <img src="photos/together-sun.jpg" alt="Şakira bilen Humoýun">
+      <img src="photos/together-boat.jpg" alt="Şakira bilen Humoýun gezelençde">
+      <img src="photos/together-close.jpg" alt="Şakira bilen Humoýun">
+      <img src="photos/bracelet.jpg" alt="Şakira üçin bilezik">
+    </section>
+    <footer>Soňky söýgi bilen, Humoýun ♥</footer>
+  </main>
+  <div id="lightbox" class="lightbox" role="dialog" aria-label="Surat doly ekranda" aria-modal="true">
+    <button class="close" aria-label="Ýapmak">×</button>
+    <button class="previous" aria-label="Öňki surat">‹</button>
+    <img id="lightboxPhoto" src="" alt="">
+    <button class="next" aria-label="Soňky surat">›</button>
+  </div>
+  <script>
+    // Paroly şu setirde üýtgedip bilersiň: dyrnaklaryň içindäki sözi çalyş.
+    const CARD_PASSWORD = 'gulum2026';
+    const password = document.getElementById('password');
+    function openCard() {
+      if (password.value === CARD_PASSWORD) {
+        document.getElementById('lockScreen').style.display = 'none';
+        document.getElementById('card').style.display = 'block';
+        document.title = 'Şakira ♥ Humoýun';
+      } else {
+        document.getElementById('error').textContent = 'Parol nädogry. Ýene bir gezek synanyş.';
+        password.focus();
+      }
+    }
+    document.getElementById('openButton').addEventListener('click', openCard);
+    password.addEventListener('keydown', e => { if (e.key === 'Enter') openCard(); });
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('show'); });
+    }, { threshold: .12 });
+    document.querySelectorAll('.gallery img').forEach((photo, i) => {
+      photo.style.transitionDelay = `${Math.min((i % 2) * 110, 110)}ms`;
+      observer.observe(photo);
+    });
+    const photos = [...document.querySelectorAll('.gallery img')];
+    const lightbox = document.getElementById('lightbox');
+    const lightboxPhoto = document.getElementById('lightboxPhoto');
+    let currentPhoto = 0;
+    function showPhoto(index) {
+      currentPhoto = (index + photos.length) % photos.length;
+      lightboxPhoto.src = photos[currentPhoto].src;
+      lightboxPhoto.alt = photos[currentPhoto].alt;
+    }
+    function openLightbox(index) { showPhoto(index); lightbox.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    function closeLightbox() { lightbox.classList.remove('open'); document.body.style.overflow = ''; }
+    photos.forEach((photo, index) => photo.addEventListener('click', () => openLightbox(index)));
+    lightbox.querySelector('.close').addEventListener('click', closeLightbox);
+    lightbox.querySelector('.previous').addEventListener('click', () => showPhoto(currentPhoto - 1));
+    lightbox.querySelector('.next').addEventListener('click', () => showPhoto(currentPhoto + 1));
+    lightbox.addEventListener('click', event => { if (event.target === lightbox) closeLightbox(); });
+    document.addEventListener('keydown', event => {
+      if (!lightbox.classList.contains('open')) return;
+      if (event.key === 'Escape') closeLightbox();
+      if (event.key === 'ArrowLeft') showPhoto(currentPhoto - 1);
+      if (event.key === 'ArrowRight') showPhoto(currentPhoto + 1);
+    });
+    let touchStartX = 0;
+    lightbox.addEventListener('touchstart', event => { touchStartX = event.changedTouches[0].screenX; }, { passive:true });
+    lightbox.addEventListener('touchend', event => {
+      const distance = event.changedTouches[0].screenX - touchStartX;
+      if (Math.abs(distance) > 45) showPhoto(currentPhoto + (distance < 0 ? 1 : -1));
+    }, { passive:true });
+  </script>
+</body>
+</html>
